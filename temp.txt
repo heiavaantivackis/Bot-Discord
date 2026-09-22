@@ -1,0 +1,220 @@
+Q : Quel langage/framework préfères-tu pour le bot ?
+R : JavaScript/TypeScript (discord.js)
+
+Q : Que fait le bot ?
+R : Voici la réponse : (voir en dessous) 
+
+Le format de texte que j'ai choisi:
+-  deux retours à la lignes signifies que c'est une autre section (info, modération , objetA, ...)
+- "-" pour lister les éléments
+- les objets sont différents concept ou chose a détaillé, chaque objet à ça sa section
+- deux
+
+
+ Donner des informations : 
+- Afficher les nouveaux arrivant avec un bienvenue
+- Faire des sondages
+- Montrer un classement (objet A)
+- Montrer des preuves de récompenses (objet B)
+- Montrer quand il y a un évènement (avec l'heure de départ, de fin, la durée restant)(objet C)
+- Affichez quand il y a de nouveaux codes Cadeaux (objet D)
+- Afficher les alertes créer par les membres (Objet E)
+- Afficher les nouveautés sur les Réseaux Sociaux (Objet F)
+- Afficher quand quelqu'un lance un recrutement (Objet G)
+- Afficher les informations concernant le serveur (nombre de membre, nombre de gang, nombre de combat actif) (Objet H)
+
+
+Modération :
+Auto-modération : 
+- évite le spam
+- les mots interdites (il y aura une liste de mot enregistrer, on peut ajouter, modifer ou supprimer des mots de cette liste directement via le serveur
+- Vérifie les liens, et les supprimes si ils sont dangereux
+- Vérifie le contenue d'une image (NSFW interdit, Gore, objet illicite...)
+- Captcha pour vérifier les nouveaux arrivants (que ce n'est pas des bots)
+- Mettre le rôle member automatiquement.
+- Gérer un systeme de réputation des gang et joueurs (objet H)
+
+
+Objet A : Le classement :
+Il y a 2 types de classements :
+- Classement de Gang ("Gang" est l'objet I)
+- Classement de Joueur ("Joueur" est l'objet J)
+Pour ces 2 types de classements il y a le classement général qui sera le résultat de plusieurs classements :
+Les classements qui compose le classement général sont des modes de jeux, (comme duel, un joueur se bat contre un autre joueur par exemple) .
+Le bot doit pouvoir créer un classement du type Gang ou Joueur lorsqu'on ajoute un nouveau mode de jeu*. 
+En d'autre mots, il y a 1 classement par mode de jeu* , l'addition des scores dans tout les classements donnera le classement générale du même type. ("mode de jeu" est l'objet k)
+Le scoring sera comme les Elo dans les echecs :
+
+FORMULE :
+\(\text{Nouveau\ Elo}=\text{Ancien\ Elo}+K\times (\text{Score\ réel}-\text{Score\ attendu})\)
+
+EXEMPLE :
+Le score réel : Vaut 1 pour une victoire, 0,5 pour un match nul et 0 pour une défaite.Le score attendu : C'est la probabilité de victoire calculée selon l'écart de points entre les deux joueurs (entre 0 et 1).Le facteur K (K-factor) : C'est un coefficient qui détermine l'importance de la partie. Il est plus élevé pour les jeunes ou les débutants (40) pour que leur classement s'ajuste vite, et plus faible pour les joueurs confirmés (10 ou 20) afin de stabiliser leur cote.
+
+
+Objet B : Récompenses :
+Les récompenses peuvent être diverses :
+- Niveaux
+- Evènements
+- Tournoi 
+- Saison (classement)
+...
+
+Les récompenses sont:
+- soit fixe (role, robux, reroll...)
+- soit choisit par le vainqueur, il nous demande ce qu'il veut (robux, reroll, service...) et on lui donne l'équivalent de ce que vaut la récompense.
+
+A chaque fois que quelque chose promet une récompenses, il faudrait pouvoir sélectionner le type de récompenses, fixe ou à choisir (pour le à choisir on peut saisir le montant équivalent en robux).
+
+
+Objet C : Evènement 
+Un évènement se créer , il y a un titre, une description (une histoire), la condition pour pouvoir récupérer la récompenses, la récompense en question. Le but c'est que se soit le plus simple possible. Les évènements peuvent être créer par tout le monde. Il faut juste afficher la date, l'heure de début, l'heure de fin, la durée restant.
+
+
+Objet D : Code cadeaux
+Le code cadeaux c'est celui de Gakuran, le but est de pouvoir récupérer le code dès qu'il sort pour pouvoir l'afficher :
+Le plus simple serait qu'on créer une annonce et qu'on saisit simplement le code nous même.
+
+
+Objet E : Alertes de recherche
+Une alerte est composé du profil du joueur  (Objet J)
+Et de ce qu'il recherche.
+
+Le joueur va saisir une commande et sélectionner le type de mode de jeu (Gang ou joueur) , ensuite un ou les modes de jeux qu'il recherche inscrit qui correspondent au type choisit. Il peut également choisir la communauté qu'il veut (la commu FR, la commu anglais , ou tous) pour pouvoir s'inscrire dans un classement à l'international.
+
+Une fois afficher dans l'alerte, les autres joueurs (celui qui a créer l'alerte n'est pas inclus) peuvent cliquer sur un bout postuler ce qui enverra un message au créateur avec le profil du joueur qui a postuler. Si il accepte cela averti les autres qui ont postuler qu'ils ont été refuser. 
+
+Pour le créateur de l'alerte et celui qui a été accepté cela leur renvoie le mode dans la quelle il vont jouer (si il y en a plusieurs cela va tirer au sort un mode de jeu). 
+
+Pour définir le vainqueur  il y aura de manière possible : 
+- Si les deux leaders ne sont pas considéré apte à définir eux même le vainqueur (si ils n'ont pas de rôle , arbitrage-auto) :
+Un message sera envoyé dans l'espace arbitre pour qu'un arbitre puisse prendre l'arbitrage du match. le match sera donc réservé, les autres arbitres ne peuvent pas prendre l'arbitrage d'un match déjà pris. celui qui a pris l'arbitrage du match recevra un message en privé. Dans ce message il y aura autant de champs par participant / gang (l'un ou l'autre, sa dépend du type du mode de jeu (K)) Dans le champs il saisira le score ou sa place (1er, 2e, 3e ...)
+
+A la fin les participants recevront un message si ils ont gagné ou non.
+Et on applique le scoring comme les Elo pour le classement.
+
+
+Objet F :Réseaux sociaux 
+Lorsque quelqu'un qui est enregistré comme créateur de contenue avec un compte poste quelque chose ,cela s'affiche dans un salon (live, vidéo , photo, post...)
+
+
+Objet G : Recrutement :
+C'est un genre de Bump pour les recrutements. Ils doivent sauvegarder leur post de recrutement pour le serveur, les informations du joueurs, ce qu'ils cherchent (créateur de contenue, mercenaire, Créateur de vêtement, autre, membre...), La description de leur serveur et les images/ gif qu'il veut afficher avec ... Ensuite il font un genre de /bump pour que leur serveur se publie automatiquement dans le salon dédié.
+
+Objet H : Information du Serveur
+ - Nombre de membre actuel sur le serveur (Objet J)
+- Nombre de gang Actuel sur le serveur (Objet I)
+- Nombre de combat en cours actuellement (dans l'heure)
+
+
+Objet I : Gang 
+Les gang ont une hiérarchie
+# 「勢力」Seiryoku — Les gangs
+**Les membres** de chaque **gang **sont organisés selon leur **grade** au sein de leur gang :
+
+**総長 (Sōchō)** — Chef du gang
+**副総長 (Fuku-sōchō)** — Vice-chef
+**隊長 (Taichō)** — Capitaine
+**副総長 (Fuku-taichō)** — Vice-capitaine
+**メンバー (Menbā)** — Membre
+**堅気 (Katagi)** — Civil / membre non affilié
+
+Chaque **gang **aura une **couleur unique** pour tout ces membres !
+
+ceux qui peuvent lancer une alerte de combat de gang sont uniquement ceux qui sont chef du gang, vice chef et capitaine.
+
+On peut afficher un profil pour un gang qui est fait par le chef de gang.
+
+Ce qui serait top c'est que le chef de gang puisse attribuer les rôles en dessous de lui grace au bot. Ce qui lui mettra les rôles du gang auquel il appartient et un role pour son grade (leader, bras droit...)
+
+Mais aussi qu'on puisse consulter les profils de tout les joueurs quand on veut regarder la fiche du gang (en cliquant sur un bouton next par exemple)
+
+
+Objet J : Les joueurs
+Les joueurs peuvent créer leur profil , il y aura automatiquement leur pseudo discord, le grade et le gang auquel ils appartiennent. Celui s'affichera pour les alertes ou les informations, comme pour le gang
+
+
+Objet k : Les modes de jeux :
+Les modes de jeux pour les gangs :
+1. GLADIATEUR
+Nombre de participants : À déterminer, avec le même nombre de participants dans chaque gang.
+Principe : Chaque gang se place en file. Au début de l’épreuve, le premier participant de chaque gang entre dans
+l’arène et s’affronte.
+Lorsqu’un participant est KO, il est éliminé et doit quitter l’arène. Son gang doit alors envoyer immédiatement le
+participant suivant.
+Le participant encore debout continue donc le combat contre le nouveau joueur adverse.
+Condition de victoire : Le gang qui élimine tous les participants du gang adverse remporte l’épreuve.
+2. BATAILLE GÉNÉRALE
+Nombre de participants : Libre, avec tous les joueurs disponibles de chaque gang.
+Principe : Les deux gangs envoient tous leurs participants en même temps dans la zone de combat.
+Avant l’épreuve, une méthode d’élimination doit être choisie :
+• KO : un joueur mis KO est immédiatement éliminé.
+• KO + finisher : un joueur mis KO doit être achevé pour être définitivement éliminé.
+La méthode choisie doit être la même pour les deux gangs.
+Condition de victoire : Le gang qui possède encore des joueurs en jeu lorsque tous les joueurs adverses sont
+éliminés remporte l’épreuve.
+3. DUEL DE STYLE
+Nombre de participants : 1 combattant de chaque gang.
+Principe : Chaque gang désigne un combattant possédant le même style de combat que son adversaire.
+Condition de victoire : Le combattant qui met son adversaire KO remporte le duel.
+4. DUEL NO ULT
+Nombre de participants : 1 combattant de chaque gang.
+Principe : Le style de combat est libre, mais l’utilisation des ultimes est interdite.
+Condition de victoire : Le combattant qui met son adversaire KO remporte le duel.
+5. DUEL NORMAL
+Nombre de participants : 1 combattant de chaque gang.
+Principe : Les deux participants s’affrontent librement, sans restriction particulière.
+Condition de victoire : Le combattant qui met son adversaire KO remporte le duel.
+6. BATTLE ROYALE
+Nombre de participants : À déterminer selon le format choisi.
+Formats possibles :
+• Solo : chaque joueur combat individuellement.
+• Duo : 2 joueurs par gang.
+• Trio : 3 joueurs par gang.
+• Squad : 4 joueurs par gang.
+Principe : Les participants sont envoyés dans le lycée et s’affrontent selon le format choisi. En équipe, les joueurs
+d’un même gang combattent ensemble.
+Un joueur mis KO est éliminé.
+Condition de victoire : La dernière équipe encore en jeu remporte le Battle Royale.
+7. SUMO
+Lieu : Le cercle blanc situé sur le toit.
+Nombre de participants : 1 combattant de chaque gang.
+Principe : Les deux participants commencent dans le cercle. Le but est de faire sortir son adversaire du cercle ou de
+le mettre KO.
+Si un participant sort lui-même du cercle, il est éliminé.
+Condition de victoire : Mettre son adversaire KO ou le faire sortir du cercle.
+Une fois le combattant éliminé, il ne peut pas être remplacé.
+Condition de victoire : Le gang dont le combattant réalise le plus de KO remporte l’épreuve.
+9. DOMINATION
+Nombre de participants : À déterminer, avec le même nombre de joueurs pour chaque gang.
+But : Un endroit est défini comme zone à conquérir.
+Principe : Les deux gangs doivent tenter de prendre le contrôle du territoire adverse.
+Être mis KO ou achevé n’est pas éliminatoire.
+Condition de victoire : Un gang doit rester 10 secondes dans la zone dédiée sans être interrompu pour conquérir le
+territoire adverse
+
+pour les mode pour les joueurs :
+Duel de style :
+Description : Le duel se fait avec deux combattant du meme style
+Condition de victoire : un KO
+
+Duel no ult :
+Description : Le duel est libre, les ultimes sont interdit.
+Condition de victoire: un KO
+
+Duel normal :
+Mettez KO votre adversaire
+Bataille royal :
+Nombre : nombre de participant
+Description : Vous vous battez contre tout le monde, mettez KO le plus de monde possible, on va pas compter votre score pour vous même.
+Condition de victoire: être le dernier debut, si vous êtes KO c'est éliminé.
+
+Sumo :
+Lieux : le cercle blanc sur le toit
+Description : faite sortir votre adversaire ou mettez le KO
+Condition de victoire : le mettre KO ou le faire sortir (si vous sortez vous même vous êtes éliminé)
+
+Massacre :
+Description : vous êtes seule, et vous allez combattre un par un chaque personne d'un gang .
+Condition de victoire : Je doute que vous aller éliminer tout un gang.. mais le plus important c'est de compter votre score. 
+IMPORTANT : ici le but est d'avoir le plus grand nombre de KO d'un gang, vous avez un score pour chaque gang affrontez. (c'est logique, si le gang est faible le score est moins important)

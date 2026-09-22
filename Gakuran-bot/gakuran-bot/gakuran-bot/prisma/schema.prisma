@@ -1,0 +1,218 @@
+// ==========================================================================
+// Schéma de base de données — Gakuran Bot
+// Couvre les objets A -> K définis dans le cahier des charges.
+// ==========================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- OBJET J : Joueur ----------
+model Player {
+  id         String     @id @default(cuid())
+  discordId  String     @unique
+  username   String
+  gangId     String?
+  gang       Gang?      @relation(fields: [gangId], references: [id])
+  grade      GangGrade?
+  createdAt  DateTime   @default(now())
+
+  rankings      PlayerRanking[]
+  alertsCreated Alert[]
+  recruitments  Recruitment[]
+  socials       SocialAccount[]
+}
+
+enum GangGrade {
+  SOCHO        // 総長 - Chef
+  FUKU_SOCHO   // 副総長 - Vice-chef
+  TAICHO       // 隊長 - Capitaine
+  FUKU_TAICHO  // 副隊長 - Vice-capitaine
+  MEMBER       // メンバー
+  KATAGI       // 堅気 - Civil
+}
+
+// ---------- OBJET I : Gang ----------
+model Gang {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  color     String   // hex, ex: #FF5733
+  leaderId  String?  // Player.id du Sōchō
+  createdAt DateTime @default(now())
+
+  members  Player[]
+  rankings GangRanking[]
+}
+
+// ---------- OBJET K : Modes de jeu ----------
+enum GameModeType {
+  GANG
+  PLAYER
+}
+
+model GameMode {
+  id        String       @id @default(cuid())
+  name      String       @unique
+  type      GameModeType
+  createdAt DateTime     @default(now())
+
+  playerRankings PlayerRanking[]
+  gangRankings   GangRanking[]
+  matches        Match[]
+}
+
+// ---------- OBJET A : Classement (ELO) ----------
+model PlayerRanking {
+  id         String   @id @default(cuid())
+  playerId   String
+  player     Player   @relation(fields: [playerId], references: [id])
+  gameModeId String
+  gameMode   GameMode @relation(fields: [gameModeId], references: [id])
+  elo        Int      @default(1000)
+  kFactor    Int      @default(40) // 40 débutant, 20 confirmé, 10 expert
+  updatedAt  DateTime @updatedAt
+
+  @@unique([playerId, gameModeId])
+}
+
+model GangRanking {
+  id         String   @id @default(cuid())
+  gangId     String
+  gang       Gang     @relation(fields: [gangId], references: [id])
+  gameModeId String
+  gameMode   GameMode @relation(fields: [gameModeId], references: [id])
+  elo        Int      @default(1000)
+  updatedAt  DateTime @updatedAt
+
+  @@unique([gangId, gameModeId])
+}
+
+// ---------- Combats / arbitrage (découle de l'objet E) ----------
+enum MatchStatus {
+  PENDING
+  RESERVED
+  RESOLVED
+  CANCELLED
+}
+
+model Match {
+  id         String       @id @default(cuid())
+  gameModeId String
+  gameMode   GameMode     @relation(fields: [gameModeId], references: [id])
+  status     MatchStatus  @default(PENDING)
+  arbiterId  String?      // Discord ID de l'arbitre qui a réservé le match
+  createdAt  DateTime     @default(now())
+  resolvedAt DateTime?
+
+  participants MatchParticipant[]
+}
+
+model MatchParticipant {
+  id        String  @id @default(cuid())
+  matchId   String
+  match     Match   @relation(fields: [matchId], references: [id])
+  playerId  String?
+  gangId    String?
+  score     Int?
+  placement Int?
+  won       Boolean?
+}
+
+// ---------- OBJET C : Événements ----------
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  condition   String
+  startAt     DateTime
+  endAt       DateTime
+  rewardId    String?
+  reward      Reward?  @relation(fields: [rewardId], references: [id])
+  createdById String   // Discord ID du créateur
+  createdAt   DateTime @default(now())
+}
+
+// ---------- OBJET B : Récompenses ----------
+enum RewardType {
+  FIXED  // rôle, robux, reroll fixe...
+  CHOICE // le gagnant choisit, valeur équivalente saisie
+}
+
+model Reward {
+  id           String     @id @default(cuid())
+  type         RewardType
+  label        String     // description humaine ("Rôle VIP", "500 Robux"...)
+  robuxValue   Int?       // équivalent en Robux si applicable
+  events       Event[]
+}
+
+// ---------- OBJET D : Codes cadeaux ----------
+model GiftCode {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  source    String   @default("Gakuran")
+  postedById String
+  createdAt DateTime @default(now())
+}
+
+// ---------- OBJET E : Alertes de recherche ----------
+enum AlertStatus {
+  OPEN
+  MATCHED
+  CLOSED
+}
+
+model Alert {
+  id          String       @id @default(cuid())
+  creatorId   String
+  creator     Player       @relation(fields: [creatorId], references: [id])
+  type        GameModeType
+  gameModeIds String[]     // liste d'IDs GameMode recherchés
+  community   String       // "FR" | "EN" | "ALL"
+  status      AlertStatus  @default(OPEN)
+  createdAt   DateTime     @default(now())
+}
+
+// ---------- OBJET F : Réseaux sociaux ----------
+model SocialAccount {
+  id        String @id @default(cuid())
+  playerId  String
+  player    Player @relation(fields: [playerId], references: [id])
+  platform  String // "youtube" | "tiktok" | "twitter" | ...
+  handle    String
+  channelId String // salon Discord où republier
+}
+
+// ---------- OBJET G : Recrutement ----------
+model Recruitment {
+  id          String   @id @default(cuid())
+  authorId    String
+  author      Player   @relation(fields: [authorId], references: [id])
+  description String
+  looking     String   // ce qu'ils recherchent
+  images      String[] // URLs
+  lastBumpAt  DateTime @default(now())
+}
+
+// ---------- Modération ----------
+model BadWord {
+  id        String   @id @default(cuid())
+  word      String   @unique
+  addedById String
+  createdAt DateTime @default(now())
+}
+
+// ---------- Config par serveur ----------
+model ServerConfig {
+  id               String  @id @default(cuid())
+  guildId          String  @unique
+  welcomeChannelId String?
+  logChannelId     String?
+  memberRoleId     String?
+  arbiterRoleId    String?
+}
